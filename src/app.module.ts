@@ -1,20 +1,12 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PropertyController } from './property/property.controller';
-import { APP_PIPE } from '@nestjs/core';
+import { PropertyModule } from './property/property.module';
 
 @Module({
-  imports: [],
+  imports: [PropertyModule],
   controllers: [AppController, PropertyController],
-  providers: [AppService, {
-    provide: APP_PIPE,
-    //Global Validation Pipe
-    useValue: new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true
-
-    })
-  }],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
