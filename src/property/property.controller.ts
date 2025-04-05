@@ -2,6 +2,8 @@ import { Body, Controller, Get, HttpCode, Param, ParseBoolPipe, ParseIntPipe, Pa
 import { CreatePropertyDto } from './dto/createProperty.dto';
 import { idParamDto } from './dto/idParam.dto';
 import { ParseIdPipe } from './pipes/parseIdPipe';
+import { ZodValidationPipe } from './pipes/zodValidationPipe';
+import { CreatePropertySchema, CreatePropertyZodDto } from './dto/createPropertyZod.dto';
 
 @Controller('property')
 export class PropertyController {
@@ -26,8 +28,9 @@ export class PropertyController {
 
     @Post()
     // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, groups: ['create'] })) => this line can be used in each controller on method 
-    @HttpCode(202)
-    create(@Body() body: CreatePropertyDto) {
+    // @HttpCode(202)
+    @UsePipes(new ZodValidationPipe(CreatePropertySchema))
+    create(@Body() body: CreatePropertyZodDto) {
         return body;
     }
 
