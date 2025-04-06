@@ -1,10 +1,9 @@
 import { z } from "zod";
 
 export const CreatePropertySchema = z.object({
-
     name: z.string(),
     description: z.string().min(5),
-    area: z.number().positive(),
+    price: z.number().positive(),
 })
     .required();
 
