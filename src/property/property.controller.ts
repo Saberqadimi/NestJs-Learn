@@ -6,51 +6,45 @@ import { ZodValidationPipe } from './pipes/zodValidationPipe';
 import { CreatePropertySchema, CreatePropertyZodDto } from './dto/createPropertyZod.dto';
 import { HeadersDto } from './dto/headers.dto';
 import { RequestHeader } from './pipes/request-header';
+import { PropertyService } from './property.service';
 
 @Controller('property')
 export class PropertyController {
 
-    @Get()
-    findAll() {
-        return "Hello Im Saber Qadimi";
+    propertyService:PropertyService;
+    constructor() { 
+        this.propertyService = new PropertyService();
     }
 
-    // @Get(':id/:slug')
-    // findOne(@Param() params) {
-    //     return `this is ID = ${params.id}`;
-    // }  
+    @Get()
+    findAll() {
+        return this.propertyService.findAll();
+    }
 
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id, @Query('sort', ParseBoolPipe) sort) {
-
-        console.log(typeof (id))
-        console.log(typeof (sort))
-        return [id, sort]
+    findOne(
+        @Param('id', ParseIntPipe) id: number,
+        @Query('sort', ParseBoolPipe) sort: boolean,
+    ) {
+        return this.propertyService.findOne(id, sort);
     }
 
     @Post()
-    // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, groups: ['create'] })) => this line can be used in each controller on method 
-    // @HttpCode(202)
     @UsePipes(new ZodValidationPipe(CreatePropertySchema))
     create(@Body() body: CreatePropertyZodDto) {
-        return body;
+        return this.propertyService.create(body);
     }
 
     @Patch(':id')
     update(
-        //use DTO Class Validation
-        // @Param() { id }: idParamDto,
-        //use Pipe custome class
-        @Param('id', ParseIdPipe) id,
-        @Body() body: CreatePropertyDto) {
-        return body;
+        @Param('id', ParseIdPipe) id: number,
+        @Body() body: CreatePropertyDto,
+    ) {
+        return this.propertyService.update(id, body);
     }
 
     @Post('headers')
     getHeaders(@RequestHeader(HeadersDto) headers: HeadersDto) {
         return headers;
     }
-
-
-
 }
