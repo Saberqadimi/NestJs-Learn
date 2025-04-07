@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { CreatePropertyDto } from './dto/createProperty.dto';
 import { dot } from 'node:test/reporters';
 import { UpdatePropertyDto } from './dto/updateProperty.dto';
+import { PaginationDTO } from './dto/pagination.dto';
+import { DEFAULT_PAGE_SIZE } from 'src/utils/constans';
 
 @Injectable()
 export class PropertyService {
@@ -15,21 +17,30 @@ export class PropertyService {
   ) { }
 
 
-  async findAll(page: number = 1, limit: number = 1) {
+  async findAll(paginationDto: PaginationDTO) {
+    const { skip = 0, limit = DEFAULT_PAGE_SIZE } = paginationDto;
+
     const [data, total] = await this.propertyRepo.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-      order: {
-        id: 'DESC',
-      },
+      skip,
+      take: limit
     });
+
+    const currentPage = Math.floor(skip / limit) + 1;
+    const totalPages = Math.ceil(total / limit);
 
     return {
       data,
       total,
-      page,
+      page: currentPage,
+      totalPages,
       limit,
-      lastPage: Math.ceil(total / limit),
+      skip,
+      hasNextPage: currentPage < totalPages,
+      hasPreviousPage: currentPage > 1,
+      links: {
+        next: currentPage < totalPages ? `?skip=${skip + limit}&limit=${limit}` : null,
+        prev: currentPage > 1 ? `?skip=${skip - limit}&limit=${limit}` : null
+      }
     };
   }
 

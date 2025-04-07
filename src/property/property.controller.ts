@@ -6,6 +6,7 @@ import { HeadersDto } from './dto/headers.dto';
 import { RequestHeader } from './pipes/request-header';
 import { PropertyService } from './property.service';
 import { UpdatePropertyDto } from './dto/updateProperty.dto';
+import { PaginationDTO } from './dto/pagination.dto';
 
 
 @Controller('property')
@@ -15,8 +16,8 @@ export class PropertyController {
 
 
     @Get()
-    findAll() {
-        return this.propertyService.findAll();
+    findAll(@Query() paginationDto: PaginationDTO) {
+        return this.propertyService.findAll(paginationDto);
     }
 
     @Get(':id')

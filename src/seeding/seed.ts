@@ -13,8 +13,9 @@ const options: DataSourceOptions & SeederOptions = {
 }
 
 const dataSource = new DataSource(options);
-dataSource.initialize().then(async () => {
-    await dataSource.synchronize(true);
-    await runSeeders(dataSource);
-    process.exit();
-});
+dataSource.initialize()//connect to database
+    .then(async () => {
+        await dataSource.synchronize(true); //reset or create tables
+        await runSeeders(dataSource); //insert Data Faker to Database
+        process.exit();
+    });
