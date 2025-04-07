@@ -10,6 +10,7 @@ export class ParseIdPipe implements PipeTransform<string, number> {
             throw new BadRequestException('id must be a number');
         if (val <= 0)
             throw new BadRequestException('id must be positive');
+        
         return val;
     }
 }
