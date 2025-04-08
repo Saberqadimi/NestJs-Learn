@@ -10,5 +10,7 @@ export default (): PostgresConnectionOptions => ({
     database: process.env.DB_NAME,
     entities: [path.resolve(__dirname, '..') + '/**/*.entity{.ts,.js}'],
 
-    synchronize: false,
+    // synchronize: false,
+    synchronize: true,
+    logging: true,
 });
