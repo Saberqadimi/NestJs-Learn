@@ -4,6 +4,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import jwtConfig from '../config/jwt.config';
 import { AuthJwtPayload } from '../types/auth-jwtPayloads';
+import { AuthService } from '../auth.service';
 
 /**
  * JWT Strategy for Passport authentication
@@ -18,7 +19,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
      */
     constructor(
         @Inject(jwtConfig.KEY)
-        private jwtConfiguration: ConfigType<typeof jwtConfig>) {
+        private jwtConfiguration: ConfigType<typeof jwtConfig>,
+        private authService:AuthService
+    ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: jwtConfiguration.secret as string,
@@ -32,6 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
      * @returns An object containing the user ID from the payload
      */
     async validate(payload: AuthJwtPayload) {
-        return { id: payload.sub };
+        const userId = payload.sub;
+        return this.authService.validateJwtUser(userId);
     }
 }

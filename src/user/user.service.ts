@@ -42,7 +42,7 @@ export class UserService {
         'lastName',
         'avatar',
         'hashedRefreshToken',
-        // 'role',
+        'role',
       ],
     });
   }
