@@ -5,6 +5,8 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import jwtConfig from '../config/jwt.config';
 import { AuthJwtPayload } from '../types/auth-jwtPayloads';
 import refreshJwtConfig from '../config/refresh-jwt.config';
+import { Request } from 'express';
+import { AuthService } from '../auth.service';
 
 /**
  * JWT Strategy for Passport authentication
@@ -19,20 +21,26 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, "refresh-jwt"
      */
     constructor(
         @Inject(refreshJwtConfig.KEY)
-        private refreshJwtConfiguration: ConfigType<typeof refreshJwtConfig>) {
+        private refreshJwtConfiguration: ConfigType<typeof refreshJwtConfig>,
+        private authService: AuthService
+    ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: refreshJwtConfiguration.secret as string,
-            ignoreExpiration: false
+            ignoreExpiration: false,
+            passReqToCallback: true,
         });
     }
 
-    /**
-     * Validates the JWT payload
-     * @param payload - The decoded JWT payload
-     * @returns An object containing the user ID from the payload
-     */
-    async validate(payload: AuthJwtPayload) {
-        return { id: payload.sub };
+  
+    async validate(req:Request ,payload: AuthJwtPayload) {
+        const authHeader = req.get("authorization");
+        if (!authHeader) {
+            throw new Error('Authorization header is missing');
+        }
+        const refreshToken = authHeader.replace("Bearer" , "").trim();
+        const userId = payload.sub;
+        
+        return this.authService.validateRefreshToken(userId, refreshToken);
     }
 }

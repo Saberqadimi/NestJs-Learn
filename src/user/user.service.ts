@@ -11,6 +11,10 @@ export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) { }
 
 
+  async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
+    return await this.userRepo.update({ id: userId }, { hashedRefreshToken })
+  }
+
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepo.create(createUserDto);
 
@@ -37,7 +41,7 @@ export class UserService {
         'firstName',
         'lastName',
         'avatar',
-        // 'hashedRefreshToken',
+        'hashedRefreshToken',
         // 'role',
       ],
     });

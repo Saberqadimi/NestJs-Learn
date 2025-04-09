@@ -23,7 +23,7 @@ export class User {
     @Column({ nullable: true })
     password: string;
 
-    @Column()
+    @Column({ nullable: true })
     hashedRefreshToken:string;
     
     @CreateDateColumn()
