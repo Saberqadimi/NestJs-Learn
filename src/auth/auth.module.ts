@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import refreshJwtConfig from './config/refresh-jwt.config';
+import { RefreshJwtStrategy } from './strategies/refresh.strategy';
 
 /**
  * Authentication Module
@@ -23,14 +25,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     
     // Load JWT configuration
-    ConfigModule.forFeature(jwtConfig)
+    ConfigModule.forFeature(jwtConfig),
+    ConfigModule.forFeature(refreshJwtConfig)
   ],
   
   // Controllers that handle authentication endpoints
   controllers: [AuthController],
   
   // Services and strategies for authentication
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, UserService, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
 })
 export class AuthModule { }
 
